@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ref, computed } from "vue";
 import { marked } from "marked";
-
-const ApiKey: string = import.meta.env.VITE_API_KEY;
-const genAI = new GoogleGenerativeAI(ApiKey);
+import { promptGemini, promptGeminiStream } from "../scripts/geminiFunctions";
+import { gsap } from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+gsap.registerPlugin(ScrollToPlugin)
 
 const areaOfInterest = ref<string>("");
 const skillLevel = ref<string>("");
@@ -13,39 +13,43 @@ const projectScope = ref<string>("");
 const generatedText = ref<string>("");
 const rendered = ref<boolean>(false);
 
+
+const systemInstructions: string = `Create a cool name for it and use it as the title.
+   Format the responde in markdown.
+   Use a friendly tone and present the idea in a simple and approachable way.
+   Use emojis to make it fun!`;
 const prompt = computed(() => {
   return `Generate a creative and unique project idea
    for ${areaOfInterest.value} 
    with a skill level of ${skillLevel.value} 
-   and a project scope of ${projectScope.value}.
-   Create a cool name for it and use it as the title.
-   Format the responde in markdown.
-   Use a friendly tone and present the idea in a simple and approachable way.
-   Use emojis to make it fun!`;
+   and a project scope of ${projectScope.value}.`;
 });
-
-async function run() {
-  generatedText.value = "Generating Content...";
-  console.log("Generating Content...");
-  rendered.value = true;
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
-
-  const result = await model.generateContent(prompt.value);
-  const response = await result.response;
-  generatedText.value = response.text();
-  console.log("Content Generated.")
-}
 
 const formattedText = computed(() => {
   return marked(generatedText.value);
 });
 
+async function run(){
+    rendered.value = true;
+    generatedText.value = "Generating Content...";
+    generatedText.value = await promptGemini(prompt.value, systemInstructions);
+    gsap.to(window, { duration: 1, scrollTo: "#generatedText", ease: "power2" });
+}
+
+// const runStreamed = async () => {
+//   generatedText.value = "Generating Streamed Content...";
+//   rendered.value = true;
+//   generatedText.value = "";
+//   for await (const chunk of promptGeminiStream(prompt.value)) {
+//     generatedText.value += chunk;
+//   }
+// };
+
 </script>
 
 <template>
 <section class="section">
-  <h1>Idea Generator v1.0</h1>
-  <p>Generate ideas for your next project</p>
+  <h1>Idea Generator 1.1</h1>
 
   <div class="options">
     <div class="option-set">
@@ -99,9 +103,13 @@ const formattedText = computed(() => {
 
   <button @click="run">Generate Idea</button>
 
-  <div v-if="rendered === true" class="generatedText markdown-content">
-    <div v-html="formattedText"></div>
+  <div v-if="rendered === true" class="generatedText markdown-content" id="generatedText">
+        <div v-html="formattedText"></div>
   </div>
+
+  <button class="btn-primary">
+    Work on this Project
+  </button>
 </section>
 </template>
 
