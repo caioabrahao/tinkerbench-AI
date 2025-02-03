@@ -3,6 +3,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const ApiKey: string = import.meta.env.VITE_API_KEY;
 const genAI = new GoogleGenerativeAI(ApiKey);
 
+const generationConfig = {
+  temperature: 2,
+  // topP: 0.95,
+  // topK: 40,
+};
+
 
 export async function promptGemini(prompt: string, systemInstructions?: string) {
   const model = genAI.getGenerativeModel({
@@ -23,6 +29,7 @@ export async function* promptGeminiStream(prompt: string, systemInstructions?: s
   const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
     systemInstruction: systemInstructions,
+    generationConfig: generationConfig
   });
 
   console.log("Generating Streamed Content...");
