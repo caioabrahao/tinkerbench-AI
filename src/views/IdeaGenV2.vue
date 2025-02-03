@@ -71,10 +71,19 @@ const runStreamed = async () => {
   }
   }
 
+const openSidebar = () => {
+  const sidebar = document.querySelector('.sideBar');
+  if (sidebar) {
+    sidebar.classList.toggle('active');
+  }
+}
+
 </script>
 
 <template>
 <section class="screen">
+    <button @click="openSidebar" class="sidebarToggle"><i class="ri-side-bar-line"></i></button>
+
     <div class="sideBar">
       <div class="logo">
         <Logo/>
@@ -149,6 +158,21 @@ const runStreamed = async () => {
 </template>
 
 <style scoped>
+.sidebarToggle {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    background-color: #121212;
+    color: white;
+    border-radius: 90px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    display: none;
+}
 .logo{
     display: flex;
     justify-content: center;
@@ -228,5 +252,40 @@ const runStreamed = async () => {
         color: #888;
         text-decoration: none;
     }
+}
+
+@media (max-width: 768px) {
+  .sidebarToggle {
+    display: block;
+  }
+
+  .screen {
+    flex-direction: column;
+  }
+
+  .sideBar {
+    width: 80%;
+    height: auto;
+    padding: 16px;
+    box-shadow: none;
+    display: none; /* Hide sidebar by default */
+    padding-top: 64px;
+  }
+
+  .sideBar.active {
+    display: flex; /* Show sidebar when active */
+    position: absolute;
+    height: 100%;
+  }
+
+  .content {
+    width: 100%;
+    padding: 16px;
+    padding-top: 64px;
+  }
+
+  .footnote {
+    left: 50%;
+  }
 }
 </style>
