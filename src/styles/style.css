@@ -20,3 +20,33 @@
   align-items: center;
   justify-content: center;
 }
+
+input[type=radio]{
+  display: none;
+}
+
+input[type=radio] + label {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+input[type=radio]:checked + label {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.button{
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s, border-color 0.3s;
+}
